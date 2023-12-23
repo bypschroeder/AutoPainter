@@ -3,7 +3,7 @@ import imgaug.augmenters as ia
 import glob
 
 images = []
-images_path = glob.glob('../resources/train_images/*.jpg')
+images_path = glob.glob('../resources/train_images/v2/*.png')
 for img_path in images_path:
     img = cv2.imread(img_path)
     images.append(img)
@@ -15,7 +15,7 @@ augmentation = ia.Sequential([
     ia.Sometimes(0.5, ia.GaussianBlur(sigma=(0, 0.5))),
 ])
 
-target_images = 100
+target_images = 50
 
 while len(images) < target_images:
     augmented_images = augmentation(images=images)
@@ -25,7 +25,7 @@ while len(images) < target_images:
 images = images[:target_images]
 
 for i, img in enumerate(images):
-    cv2.imwrite(f'../resources/train_images/augmented_images/{i}.jpg', img)
+    cv2.imwrite(f'../resources/train_images/v2/augmented_images/{i}.jpg', img)
 
 # for img in augmented_images:
 #     cv2.imshow('Augmented Image', img)
