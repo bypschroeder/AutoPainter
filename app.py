@@ -3,7 +3,7 @@ from object_detection.detect_numbers import recognize_numbers, detect_dots_numbe
 import cv2
 
 
-MODEL_PATH = "resources/yolo_model/NumberModel.pt"
+MODEL_PATH = "resources/yolo_model/best.pt"
 CAPTURED_IMG_PATH = "resources/captured_img/4.jpg"
 SAVE_DIR = "resources/runs/detect/"
 PYTESSERACT_PATH = "C:/Program Files/Tesseract-OCR/tesseract.exe"
