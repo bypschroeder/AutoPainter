@@ -1,6 +1,8 @@
 from logging import Logger
 from serial.tools import list_ports
 from pydobot import Dobot
+import serial
+import time
 
 
 def calculate_points(points):
@@ -24,19 +26,30 @@ class DobotController:
 
         if len(ports) == 0:
             self.logger.error("No Dobot detected")
-            return None
+            return False
 
-        device_port = ports[port].device
-        device = Dobot(port=device_port, verbose=False)
+        try:
+            device_port = ports[port].device
+            serial_connection = serial.Serial()
+            serial_connection.port = device_port
+            serial_connection.baudrate = 115200
+            serial_connection.timeout = 2
+            serial_connection.open()
 
-        device.speed(100, 100)
+            time.sleep(1)
 
-        return device
+            device = Dobot(port=device_port, verbose=False)
+            device.speed(100, 100)
+            self.bot = device
+            return True
+        except Exception as e:
+            self.logger.error("Error: {}".format(e))
+            return False
 
-    def homing(self):
-        print("homing")
-        self.bot.move_to(250, 0, 0, 0, wait=True)
-        print("finished homing")
+        # device_port = ports[port].device
+        # device = Dobot(port=device_port, verbose=False)
+        #
+        # device.speed(100, 100)
 
     def draw_line(self, x1, y1, x2, y2):
         try:

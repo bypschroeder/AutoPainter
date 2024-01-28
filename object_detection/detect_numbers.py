@@ -54,7 +54,7 @@ def process_image(model, img_path):
 
     img = cv2.imread(img_path)
 
-    results = model(img, conf=0.3, project=SAVE_DIR, save=True,  save_crop=True)[0]
+    results = model(img, conf=0.3, project=SAVE_DIR, save=True, save_crop=True)[0]
     detections = sv.Detections.from_ultralytics(results)
 
     numbers = sort_files_by_number(f"{SAVE_DIR}/predict/crops/Number")
@@ -122,9 +122,9 @@ def detect_dots_numbers():
         labels=labels,
     )
 
-    cv2.imshow('yolov8', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow('yolov8', img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     return grouped_coords
 
@@ -170,13 +170,18 @@ def recognize_numbers(img_coordinates):
             number = None
 
         detection_info.append((number_info, dot_info, number))
-        print(number)
+        # print(number)
 
         converted_coordinates = convert_coordinates(detection_info)
-        cv2.imshow("Result", number_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("Result", number_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
-    sorted_data = sorted(converted_coordinates, key=lambda item: item[0])
+    filtered_data = [coord for coord in converted_coordinates if coord[0] is not None]
 
-    return sorted_data
+    if not filtered_data:
+        print("No numbers detected")
+        return None
+    else:
+        sorted_data = sorted(filtered_data, key=lambda item: item[0])
+        return sorted_data
