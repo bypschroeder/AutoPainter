@@ -8,6 +8,11 @@ import pytesseract
 
 
 def delete_folder_contents(folder_path):
+    """
+    Deletes all files and folders in a given directory
+    :param folder_path: path to the folder to delete
+    """
+
     from app import SAVE_DIR
 
     try:
@@ -27,6 +32,12 @@ def delete_folder_contents(folder_path):
 
 
 def load_model(model_path):
+    """
+    Loads a YOLO model from a given path
+    :param model_path: path to the model to load
+    :return: yolo model
+    """
+
     try:
         return YOLO(model_path)
     except Exception as e:
@@ -35,6 +46,12 @@ def load_model(model_path):
 
 
 def sort_files_by_number(directory):
+    """
+    Sorts a list of files by their number in the filename
+    :param directory: the directory to sort the files in
+    :return: a list of the sorted files
+    """
+
     files = []
     for filename in os.listdir(directory):
         if filename.endswith(".jpg"):
@@ -44,17 +61,31 @@ def sort_files_by_number(directory):
 
 
 def calculate_distance(coord1, coord2):
+    """
+    Calculates the distance between two coordinates
+    :param coord1: coordinate 1
+    :param coord2: coordinate 2
+    :return: distance between the two coordinates
+    """
+
     x1, y1, _, _ = coord1[1]
     x2, y2, _, _ = coord2[1]
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 def process_image(model, img_path):
-    from app import SAVE_DIR
+    """
+    Processes an image using a yolo model and returns the coordinates of the numbers and dots, as well as the image
+    :param model: yolo model to use
+    :param img_path: path to the image to process
+    :return: coordinates of the numbers and dots, the detections object, and the image
+    """
+
+    from app import SAVE_DIR, CONFIDENCE_THRESHOLD
 
     img = cv2.imread(img_path)
 
-    results = model(img, conf=0.3, project=SAVE_DIR, save=True, save_crop=True)[0]
+    results = model(img, conf=CONFIDENCE_THRESHOLD, project=SAVE_DIR, save=True, save_crop=True)[0]
     detections = sv.Detections.from_ultralytics(results)
 
     numbers = sort_files_by_number(f"{SAVE_DIR}/predict/crops/Number")
@@ -87,7 +118,11 @@ def process_image(model, img_path):
 
 
 def detect_dots_numbers():
-    from app import MODEL_PATH, CAPTURED_IMG_PATH, SAVE_DIR
+    """
+    Detects numbers and dots in an image with a given model and groups them by their calculated distance
+    :return: a list of grouped coordinates of the numbers and dots
+    """
+    from app import MODEL_PATH, CAPTURED_IMG_PATH, SAVE_DIR, SHOW_DETECTIONS, RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT
 
     folder_path = SAVE_DIR
 
@@ -106,8 +141,9 @@ def detect_dots_numbers():
 
     box_annotator = sv.BoxAnnotator(
         thickness=2,
-        text_thickness=2,
-        text_scale=1
+        text_thickness=1,
+        text_scale=0.5,
+        text_padding=4,
     )
 
     labels = [
@@ -122,14 +158,23 @@ def detect_dots_numbers():
         labels=labels,
     )
 
-    # cv2.imshow('yolov8', img)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    if SHOW_DETECTIONS:
+        cv2.namedWindow('YOLO Detection', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('YOLO Detection', RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT)
+        cv2.imshow('YOLO Detection', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     return grouped_coords
 
 
 def convert_coordinates(grouped_coords):
+    """
+    Converts the coordinates of the coordinates to a percentage of the image size
+    :param grouped_coords: grouped coordinates to convert
+    :return: converted coordinates
+    """
+    from app import WEBCAM_RESOLUTION_WIDTH, WEBCAM_RESOLUTION_HEIGHT
     converted_data = []
 
     for number_coords, dot_coords, number in grouped_coords:
@@ -138,10 +183,12 @@ def convert_coordinates(grouped_coords):
         center_x = (dot_x_min + dot_x_max) / 2
         center_y = (dot_y_min + dot_y_max) / 2
 
-        if center_x > 420:
-            center_x -= 420
-        new_center_x = round((center_x / 1080) * 100, 2)
-        new_center_y = round((center_y / 1080) * 100, 2)
+        resolution_difference = WEBCAM_RESOLUTION_WIDTH - WEBCAM_RESOLUTION_HEIGHT
+
+        if center_x > resolution_difference / 2:
+            center_x -= resolution_difference / 2
+        new_center_x = round((center_x / WEBCAM_RESOLUTION_HEIGHT) * 100, 2)
+        new_center_y = round((center_y / WEBCAM_RESOLUTION_HEIGHT) * 100, 2)
 
         converted_data.append((number, (new_center_x, new_center_y)))
 
@@ -149,17 +196,23 @@ def convert_coordinates(grouped_coords):
 
 
 def recognize_numbers(img_coordinates):
-    from app import PYTESSERACT_PATH, SAVE_DIR
+    """
+    Recognizes the numbers in the cropped images from the yolo detections using pytesseract
+    and returns the sorted coordinates with their recognized number
+    :param img_coordinates: coordinates of the cropped images of the numbers to recognize
+    :return: sorted coordinates with their recognized number
+    """
+    from app import PYTESSERACT_PATH, SAVE_DIR, SHOW_CROPPED_NUMBER, RESIZE_FACTOR, THRESHOLD_VALUE, THRESHOLD_MAX_VALUE
 
     pytesseract.pytesseract.tesseract_cmd = PYTESSERACT_PATH
     detection_info = []
     converted_coordinates = []
 
     for number_info, dot_info in img_coordinates:
-        number_img = cv2.imread(f"{SAVE_DIR}predict/crops/Number/{number_info[2]}")
-        number_img = cv2.resize(number_img, (0, 0), fx=2, fy=2)
+        number_img = cv2.imread(f"{SAVE_DIR}/predict/crops/Number/{number_info[2]}")
+        number_img = cv2.resize(number_img, (0, 0), fx=RESIZE_FACTOR, fy=RESIZE_FACTOR)
         number_img = cv2.cvtColor(number_img, cv2.COLOR_BGR2GRAY)
-        number_img = cv2.threshold(number_img, 125, 255, cv2.THRESH_BINARY)[1]
+        number_img = cv2.threshold(number_img, THRESHOLD_VALUE, THRESHOLD_MAX_VALUE, cv2.THRESH_BINARY)[1]
         config_number = r'--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789'
         detected_number = pytesseract.image_to_string(number_img, config=config_number)
         cleaned_number = ''.join(filter(str.isdigit, detected_number))
@@ -170,12 +223,14 @@ def recognize_numbers(img_coordinates):
             number = None
 
         detection_info.append((number_info, dot_info, number))
-        # print(number)
 
         converted_coordinates = convert_coordinates(detection_info)
-        # cv2.imshow("Result", number_img)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+
+        if SHOW_CROPPED_NUMBER:
+            print(number)
+            cv2.imshow("Cropped Number", number_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
 
     filtered_data = [coord for coord in converted_coordinates if coord[0] is not None]
 

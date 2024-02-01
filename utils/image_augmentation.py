@@ -2,6 +2,8 @@ import cv2
 import imgaug.augmenters as ia
 import glob
 
+# Augmenting images to create more images for creating a dataset
+
 images = []
 images_path = glob.glob('../resources/train_images/v2/*.png')
 for img_path in images_path:

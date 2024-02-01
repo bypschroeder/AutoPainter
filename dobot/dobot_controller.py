@@ -6,6 +6,12 @@ import time
 
 
 def calculate_points(points):
+    """
+    Re-calculate the points to fit the Dobot's coordinate system
+    :param points: List of points to calculate
+    :return: List of calculated points
+    """
+
     output = []
     for point in points:
         print("Calc Input:", point)
@@ -18,9 +24,16 @@ class DobotController:
 
     def __init__(self, logger: Logger, port=2):
         self.logger = logger
+        self.is_connected = False
         self.bot = self.init_bot(port)
 
     def init_bot(self, port):
+        """
+        Initiate the Dobot and return the device
+        :param port: The port the Dobot is connected to
+        :return: device
+        """
+
         ports = list_ports.comports()
         self.logger.debug("ports: {}".format(ports))
 
@@ -40,8 +53,8 @@ class DobotController:
 
             device = Dobot(port=device_port, verbose=False)
             device.speed(100, 100)
-            self.bot = device
-            return True
+            self.is_connected = True
+            return device
         except Exception as e:
             self.logger.error("Error: {}".format(e))
             return False
@@ -50,8 +63,18 @@ class DobotController:
         # device = Dobot(port=device_port, verbose=False)
         #
         # device.speed(100, 100)
+        # self.is_connected = True
+        # return device
 
     def draw_line(self, x1, y1, x2, y2):
+        """
+        Draw a line with the Dobot from point 1 to point 2
+        :param x1: x coordinate of point 1
+        :param y1: y coordinate of point 1
+        :param x2: x coordinate of point 2
+        :param y2: y coordinate of point 2
+        """
+
         try:
             print("drawing:", x1, y1, "to", x2, y2)
 
@@ -64,6 +87,10 @@ class DobotController:
             print("Coordinates out of range!")
 
     def draw_dot_to_dot(self, points):
+        """
+        Draw multiple lines with the Dobot
+        :param points: List of points to draw
+        """
         points = calculate_points(points)
         for x in range(0, len(points) - 1):
             print("drawing:", points[x][0], points[x][1], points[x + 1][0], points[x + 1][1])

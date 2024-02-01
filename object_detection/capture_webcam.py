@@ -3,10 +3,15 @@ import cv2
 
 
 def parse_arguments() -> argparse.Namespace:
+    """
+    Parse arguments to set webcam resolution
+    :return: parsed arguments
+    """
+    from app import WEBCAM_RESOLUTION_WIDTH, WEBCAM_RESOLUTION_HEIGHT
     parser = argparse.ArgumentParser(description='YOLOv8')
     parser.add_argument(
         '--webcam-resolution',
-        default=[1920, 1080],
+        default=[WEBCAM_RESOLUTION_WIDTH, WEBCAM_RESOLUTION_HEIGHT],
         nargs=2,
         type=int,
     )
@@ -15,6 +20,11 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def capture_webcam(output_file):
+    """
+    Capture image from webcam
+    :param output_file: path to save image
+    """
+
     args = parse_arguments()
     frame_width, frame_height = args.webcam_resolution
 
