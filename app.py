@@ -21,9 +21,9 @@ WEBCAM_RESOLUTION_WIDTH = 1920
 WEBCAM_RESOLUTION_HEIGHT = 1080
 
 # Options to show results
-SHOW_DETECTIONS = False
-SHOW_CROPPED_NUMBER = False
-SHOW_DETECTED_DOTS = True
+SHOW_DETECTIONS = False  # Show the detections of the yolo model
+SHOW_CROPPED_NUMBER = False  # Show the cropped number with their recognized value
+SHOW_DETECTED_DOTS = True  # Show the order of the detected dots
 
 # Detection Settings
 CONFIDENCE_THRESHOLD = 0.1  # Threshold for the confidence of the yolo model detection
