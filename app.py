@@ -80,12 +80,12 @@ def run():
 
     app = customtkinter.CTk()
     app.geometry("800x600")
-    app.title("Ausgabe")
+    app.title("Output")
 
     # Labels of the GUI
-    l1 = customtkinter.CTkLabel(master=app, text=f"Erkannte Zahlen: {numbers}", font=("Arial", 24))
+    l1 = customtkinter.CTkLabel(master=app, text=f"Recognized Numbers: {numbers}", font=("Arial", 24))
     l1.place(relx=0.5, rely=0.35, anchor=customtkinter.CENTER)
-    l2 = customtkinter.CTkLabel(master=app, text="Homing ausführen!", font=("Arial", 32), text_color="red")
+    l2 = customtkinter.CTkLabel(master=app, text="Execute homing of Dobot!", font=("Arial", 32), text_color="red")
     l2.place(relx=0.5, rely=0.55, anchor=customtkinter.CENTER)
 
     def button_function():
@@ -98,7 +98,7 @@ def run():
     # Buttons of the GUI
     button = customtkinter.CTkButton(
         master=app,
-        text="OK",
+        text="Continue",
         command=button_function,
         font=("Arial", 20),
         width=200,
@@ -108,7 +108,7 @@ def run():
     button.place(relx=0.35, rely=0.9, anchor=customtkinter.CENTER)
     button2 = customtkinter.CTkButton(
         master=app,
-        text="Abbrechen",
+        text="Cancel",
         command=cancel_application,
         font=("Arial", 20),
         fg_color="#6A8194",
