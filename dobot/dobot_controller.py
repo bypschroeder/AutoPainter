@@ -1,8 +1,6 @@
 from logging import Logger
 from serial.tools import list_ports
 from pydobot import Dobot
-import serial
-import time
 
 
 def calculate_points(points):
@@ -42,24 +40,6 @@ class DobotController:
         if len(ports) == 0:
             self.logger.error("No Dobot detected")
             return False
-        #
-        # try:
-        #     device_port = ports[port].device
-        #     serial_connection = serial.Serial()
-        #     serial_connection.port = device_port
-        #     serial_connection.baudrate = 115200
-        #     serial_connection.timeout = 2
-        #     serial_connection.open()
-        #
-        #     time.sleep(1)
-        #
-        #     device = Dobot(port=device_port, verbose=False)
-        #     device.speed(100, 100)
-        #     self.is_connected = True
-        #     return device
-        # except Exception as e:
-        #     self.logger.error("Error: {}".format(e))
-        #     return False
 
         device_port = ports[port].device
         device = Dobot(port=device_port, verbose=False)
@@ -92,10 +72,39 @@ class DobotController:
 
     def draw_dot_to_dot(self, points):
         """
-        Draw multiple lines with the Dobot
+        Draw multiple lines with the Dobot from point to point
         :param points: List of points to draw
         """
+
         points = calculate_points(points)
         for x in range(0, len(points) - 1):
             print("drawing:", points[x][0], points[x][1], points[x + 1][0], points[x + 1][1])
             self.draw_line(points[x][0], points[x][1], points[x + 1][0], points[x + 1][1])
+
+    def draw_area(self, points):
+        """
+        Color an area with the Dobot by connecting the points and filling the area
+        :param points: List of points that form the area
+        """
+
+        calculated_points = calculate_points(points)
+
+        for i in range(len(calculated_points) -1):
+            x1, y1 = calculated_points[i]
+            x2, y2 = calculated_points[i + 1]
+            self.draw_line(x1, y1, x2, y2)
+
+        x1, y1 = calculated_points[-1]
+        x2, y2 = calculated_points[0]
+        self.draw_line(x1, y1, x2, y2)
+        self.bot.move_to(x2, y2, -20, 0, wait=True)
+
+        top_y = max([point[1] for point in calculated_points])
+
+        furthest_x = max(point[0] for point in calculated_points if point[1] == top_y)
+        nearest_x = min(point[0] for point in calculated_points if point[1] == top_y)
+
+        current_y = top_y
+        while current_y > min([point[1] for point in calculated_points]):
+            self.draw_line(furthest_x, current_y, x2, current_y)
+            current_y -= 2

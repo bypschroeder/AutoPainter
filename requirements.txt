@@ -6,3 +6,4 @@ pytesseract~=0.3.10
 ultralytics~=8.0.227
 imgaug~=0.4.0
 customtkinter~=5.2.2
+numpy~=1.26.2

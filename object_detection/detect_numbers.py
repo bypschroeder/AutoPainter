@@ -122,13 +122,11 @@ def detect_dots_numbers():
     Detects numbers and dots in an image with a given model and groups them by their calculated distance
     :return: a list of grouped coordinates of the numbers and dots
     """
-    from app import MODEL_PATH, CAPTURED_IMG_PATH, SAVE_DIR, SHOW_DETECTIONS, RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT
+    from app import OBJECT_DETECTION_MODEL_PATH, CAPTURED_IMG_PATH, SAVE_DIR, SHOW_DETECTIONS, RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT
 
-    folder_path = SAVE_DIR
+    delete_folder_contents(SAVE_DIR)
 
-    delete_folder_contents(folder_path)
-
-    model = load_model(MODEL_PATH)
+    model = load_model(OBJECT_DETECTION_MODEL_PATH)
 
     number_coords, dot_coords, detections, img = process_image(model, CAPTURED_IMG_PATH)
 
@@ -159,9 +157,9 @@ def detect_dots_numbers():
     )
 
     if SHOW_DETECTIONS:
-        cv2.namedWindow('YOLO Detection', cv2.WINDOW_NORMAL)
-        cv2.resizeWindow('YOLO Detection', RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT)
-        cv2.imshow('YOLO Detection', img)
+        cv2.namedWindow('Object Detection', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Object Detection', RESULT_WINDOW_WIDTH, RESULT_WINDOW_HEIGHT)
+        cv2.imshow('Object Detection', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
