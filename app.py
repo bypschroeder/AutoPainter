@@ -9,7 +9,7 @@ import dobot.dobot_controller as dobot_controller
 # Path of the trained yolo model
 MODEL_PATH = "resources/yolo_model/best.pt"
 # Path where the captured image will be saved
-CAPTURED_IMG_PATH = "resources/captured_img/4.jpg"
+CAPTURED_IMG_PATH = "resources/captured_img/1.jpg"
 # Path where the detected image will be saved
 SAVE_DIR = "resources/runs/detect"
 # Path to the tesseract executable
@@ -28,7 +28,7 @@ SHOW_DETECTED_DOTS = True  # Show the order of the detected dots
 # Detection Settings
 CONFIDENCE_THRESHOLD = 0.1  # Threshold for the confidence of the yolo model detection
 RESIZE_FACTOR = 2  # Factor to resize the cropped, detected number
-THRESHOLD_VALUE = 140  # Threshold value for the grayscale image of the cropped, detected number
+THRESHOLD_VALUE = 170  # Threshold value for the grayscale image of the cropped, detected number
 THRESHOLD_MAX_VALUE = 255  # Max value for the threshold_value
 
 # Result Window Resolution
@@ -36,7 +36,10 @@ RESULT_WINDOW_WIDTH = 1920
 RESULT_WINDOW_HEIGHT = 1080
 
 # COM-Port of the Dobot
-DOBOT_PORT = 2
+DOBOT_PORT = 0
+Z_AXIS_HEIGHT = -41
+CALC_POINTS_OFFSET_X = 194
+CALC_POINTS_OFFSET_Y = 50
 
 
 def run():
