@@ -101,10 +101,10 @@ class DobotController:
 
         top_y = max([point[1] for point in calculated_points])
 
-        furthest_x = max(point[0] for point in calculated_points if point[1] == top_y)
+        farthest_x = max(point[0] for point in calculated_points if point[1] == top_y)
         nearest_x = min(point[0] for point in calculated_points if point[1] == top_y)
 
         current_y = top_y
         while current_y > min([point[1] for point in calculated_points]):
-            self.draw_line(furthest_x, current_y, x2, current_y)
+            self.draw_line(farthest_x, current_y, x2, current_y)
             current_y -= 2

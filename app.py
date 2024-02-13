@@ -18,7 +18,7 @@ SAVE_DIR = "resources/runs/detect"
 PYTESSERACT_PATH = "C:/Program Files/Tesseract-OCR/tesseract.exe"
 
 # Webcam Settings
-CAPTURE_WEBCAM = False
+CAPTURE_WEBCAM = False  # If True, the CAPTURED_IMG_PATH will be overwritten with the captured image
 WEBCAM_RESOLUTION_WIDTH = 1920
 WEBCAM_RESOLUTION_HEIGHT = 1080
 
@@ -115,6 +115,7 @@ def run_dot_to_dot():
 def run_fill_areas():
     """
     Runs the second use case to color areas.
+    This use case is not finished and will probably not work with a newly captured image.
     """
 
     # Capture image from webcam
