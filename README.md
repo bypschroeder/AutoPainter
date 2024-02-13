@@ -35,7 +35,7 @@ DOBOT_PORT = <YOUR_PORT>
 ```
 
 Enable the desired use case by uncommenting the relevant code within the run function of app.py. 
-For example, to run the first use case, uncomment the following code:
+For example, to run the first use case, comment/uncomment the following code:
 ```python
 # Runs the first use case to draw dot to dot
 run_dot_to_dot()
@@ -43,7 +43,7 @@ run_dot_to_dot()
 # Runs the second use case to color areas
 # run_fill_areas()
 ```
-Run the application by executing __main__.py.
+Run the application by executing the file `__main__.py`.
 
 ## Authors
 This project was developed in the context of the course "Applied Robotics" at Hochschule Hof, 
