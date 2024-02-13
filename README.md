@@ -31,7 +31,7 @@ To enable homing of the Dobot Magician, install
 Specify the correct port for the Dobot Magician and customize other settings to your preferences in 
 app.py.
 ```python
-DOBOT_PORT = 0
+DOBOT_PORT = <YOUR_PORT>
 ```
 
 Enable the desired use case by uncommenting the relevant code within the run function of app.py. 
