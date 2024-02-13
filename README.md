@@ -52,3 +52,5 @@ University of Applied Sciences.
 - Marina Waller
 - Gleb Hubarevich
 - Denys Zarishniuk
+
+GitHub: https://github.com/bypschroeder/AutoPainter
